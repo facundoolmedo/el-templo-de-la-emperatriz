@@ -53,7 +53,7 @@
   .admin-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pulse 2s infinite}
   .logout-btn{background:none;border:none;color:var(--muted);font-size:.7rem;cursor:pointer;font-family:'Cinzel',serif;letter-spacing:.1em;padding:0 0 0 .5rem;border-left:1px solid rgba(201,168,76,.2);transition:color .3s;margin-left:.3rem}
   .logout-btn:hover{color:var(--rose)}
-  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none}
+  .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;position:relative;z-index:130}
   .hamburger span{display:block;width:24px;height:1px;background:var(--gold);transition:all .3s}
   @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
 
@@ -251,10 +251,12 @@
 
   /* RESPONSIVE */
   @media(max-width:900px){
-    nav{padding:1rem 2rem}
+    nav{padding:calc(.8rem + env(safe-area-inset-top)) 1.2rem .8rem;min-height:64px}
+    nav.scrolled{padding:calc(.65rem + env(safe-area-inset-top)) 1.2rem .65rem}
+    .nav-logo{font-size:.85rem;letter-spacing:.14em;max-width:75vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .nav-links{display:none}
     .hamburger{display:flex}
-    .nav-links.open{display:flex;flex-direction:column;position:fixed;inset:0;background:rgba(10,6,8,.98);justify-content:center;align-items:center;gap:2.5rem;z-index:99}
+    .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:-1.2rem;right:-1.2rem;background:rgba(10,6,8,.98);justify-content:flex-start;align-items:center;gap:1.4rem;z-index:120;padding:1.4rem 1.2rem calc(2rem + env(safe-area-inset-bottom));max-height:calc(100dvh - 64px - env(safe-area-inset-top));overflow-y:auto;-webkit-overflow-scrolling:touch}
     .nav-links.open a,.nav-links.open li{font-size:1rem}
     .about{grid-template-columns:1fr;gap:2rem;padding:3rem 2rem}
     .services-grid{grid-template-columns:1fr}
@@ -510,6 +512,9 @@ let editingPostId = null;
   window.addEventListener('scroll', () => {
     document.getElementById('nav').classList.toggle('scrolled', scrollY > 50);
     observeFadeIns();
+  });
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) closeMenu();
   });
 })();
 
@@ -884,8 +889,18 @@ function showPage(id) {
   if (id === 'blog') loadPosts('fullBlogGrid');
   observeFadeIns();
 }
-function toggleMenu() { document.getElementById('navLinks').classList.toggle('open'); }
-function closeMenu() { document.getElementById('navLinks').classList.remove('open'); }
+function shouldKeepBodyLocked() {
+  return !!document.querySelector('.modal-overlay.open, .login-overlay.open');
+}
+function toggleMenu() {
+  const navLinks = document.getElementById('navLinks');
+  navLinks.classList.toggle('open');
+  if (!shouldKeepBodyLocked()) document.body.style.overflow = '';
+}
+function closeMenu() {
+  document.getElementById('navLinks').classList.remove('open');
+  if (!shouldKeepBodyLocked()) document.body.style.overflow = '';
+}
 
 // ════ UI HELPERS ════
 function toEmbed(url) {
