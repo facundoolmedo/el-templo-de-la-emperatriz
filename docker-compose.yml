@@ -1,0 +1,42 @@
+version: '3.9'
+
+services:
+  templo-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      # Agrega aquí las variables de entorno que necesites
+      # - DATABASE_PATH=./database.db
+      # - JWT_SECRET=tu_secret_aqui
+    volumes:
+      - ./db:/app/db
+      - ./middleware:/app/middleware
+      - ./public:/app/public
+      - ./routes:/app/routes
+      - ./scripts:/app/scripts
+      - ./.env:/app/.env
+    restart: unless-stopped
+    # Descomentar si necesitas conectar con otras bases de datos
+    # depends_on:
+    #   - db
+
+# Ejemplo si necesitas una base de datos PostgreSQL o MySQL:
+# 
+# services:
+#   db:
+#     image: postgres:15-alpine
+#     environment:
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_USER: user
+#       POSTGRES_DB: templo_db
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data
+#     ports:
+#       - "5432:5432"
+
+# volumes:
+#   postgres_data:
