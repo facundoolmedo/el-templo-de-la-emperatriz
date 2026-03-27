@@ -154,6 +154,7 @@
   .form-textarea{min-height:140px;resize:vertical}
   .btn-submit{padding:1rem 3rem;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;cursor:pointer;transition:all .4s;align-self:flex-start}
   .btn-submit:hover{background:var(--gold);color:var(--deep)}
+  .is-disabled{opacity:.45;pointer-events:none;cursor:not-allowed}
 
   /* FOOTER */
   footer{border-top:1px solid rgba(201,168,76,.1);padding:4rem 4rem 2rem;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;position:relative;z-index:1}
@@ -320,7 +321,7 @@
     <div class="hero-ornament">✦ &nbsp; PORTAL MÍSTICO &nbsp; ✦</div>
     <h1>TEMPLO DE LA<br>EMPERATRIZ</h1>
     <p class="hero-sub">Un portal espiritual creado para acompañar tu proceso hacia la claridad interior y la reconexión con tu energía</p>
-    <a class="hero-cta" href="https://wa.me/5493804339278" target="_blank">CONTACTAME</a>
+    <a class="hero-cta" id="contactWhatsAppHero" href="#contacto" target="_blank" rel="noopener noreferrer">CONTACTAME</a>
   </section>
   <div class="divider"></div>
   <div class="about fade-in">
@@ -362,11 +363,11 @@
     <p class="section-lead">Comparte tus preguntas y permite que la sabiduría del tarot y los antiguos rituales iluminen tu sendero místico.</p>
     <form class="contact-form" onsubmit="submitContact(event)">
       <div class="form-row">
-        <div class="form-group"><label class="form-label">NOMBRE</label><input class="form-input" type="text" placeholder="Tu nombre" required></div>
-        <div class="form-group"><label class="form-label">APELLIDO</label><input class="form-input" type="text" placeholder="Tu apellido"></div>
+        <div class="form-group"><label class="form-label">NOMBRE</label><input class="form-input" id="contactFirstName" type="text" placeholder="Tu nombre" required></div>
+        <div class="form-group"><label class="form-label">APELLIDO</label><input class="form-input" id="contactLastName" type="text" placeholder="Tu apellido"></div>
       </div>
-      <div class="form-group"><label class="form-label">EMAIL</label><input class="form-input" type="email" placeholder="tu@email.com" required></div>
-      <div class="form-group"><label class="form-label">MENSAJE</label><textarea class="form-textarea" placeholder="Comparte tu consulta..."></textarea></div>
+      <div class="form-group"><label class="form-label">EMAIL</label><input class="form-input" id="contactEmail" type="email" placeholder="tu@email.com" required></div>
+      <div class="form-group"><label class="form-label">MENSAJE</label><textarea class="form-textarea" id="contactMessage" placeholder="Comparte tu consulta..." required></textarea></div>
       <button type="submit" class="btn-submit">ENVIAR MENSAJE</button>
     </form>
   </section>
@@ -417,7 +418,7 @@
   <div><div class="footer-logo">✦ TEMPLO DE LA EMPERATRIZ</div><p class="footer-desc">Un portal espiritual creado para acompañar tu proceso. Tarot, rituales y videncia sagrada.</p></div>
   <div class="footer-col"><h4>NAVEGACIÓN</h4><ul><li><a onclick="showPage('home')">Inicio</a></li><li><a onclick="showPage('about')">Sobre Mí</a></li><li><a onclick="showPage('blog')">Blog</a></li></ul></div>
   <div class="footer-col"><h4>SERVICIOS</h4><ul><li><a>Lectura de Tarot</a></li><li><a>Rituales Sagrados</a></li><li><a>Videncias</a></li></ul></div>
-  <div class="footer-col"><h4>CONTACTO</h4><ul><li><a href="https://wa.me/5493804339278" target="_blank">WhatsApp</a></li><li><a onclick="showPage('home');setTimeout(()=>document.getElementById('contacto').scrollIntoView({behavior:'smooth'}),100)">Formulario</a></li></ul></div>
+  <div class="footer-col"><h4>CONTACTO</h4><ul><li><a id="contactWhatsAppFooter" href="#contacto" target="_blank" rel="noopener noreferrer">WhatsApp</a></li><li><a onclick="showPage('home');setTimeout(()=>document.getElementById('contacto').scrollIntoView({behavior:'smooth'}),100)">Formulario</a></li></ul></div>
 </footer>
 <div class="footer-bottom">
   <span class="footer-copy">© 2026 Luciana Romero. Todos los derechos reservados.</span>
@@ -503,10 +504,13 @@ let allPosts = [];
 let currentFilter = 'todos';
 let pendingImages = [], pendingVideo = null, pendingCover = null, currentTags = [];
 let editingPostId = null;
+let contactEnabled = false;
+const defaultWhatsAppUrl = '';
 
 // ════ INIT ════
 (async function init() {
   loadStoredSession();
+  await loadPublicConfig();
   await loadPosts('homeBlogGrid', 4);
   observeFadeIns();
   window.addEventListener('scroll', () => {
@@ -517,6 +521,47 @@ let editingPostId = null;
     if (window.innerWidth > 900) closeMenu();
   });
 })();
+
+async function loadPublicConfig() {
+  try {
+    const data = await api('GET', '/public/config');
+    setWhatsAppLinks(data.whatsappEnabled ? data.whatsappUrl : defaultWhatsAppUrl);
+    setContactFormEnabled(!!data.contactEnabled);
+  } catch {
+    setWhatsAppLinks(defaultWhatsAppUrl);
+    setContactFormEnabled(false);
+  }
+}
+
+function setWhatsAppLinks(url) {
+  const finalUrl = url || '';
+  document.querySelectorAll('#contactWhatsAppHero, #contactWhatsAppFooter').forEach((el) => {
+    if (!el) return;
+    if (finalUrl) {
+      el.setAttribute('href', finalUrl);
+      el.setAttribute('target', '_blank');
+      el.setAttribute('rel', 'noopener noreferrer');
+      el.classList.remove('is-disabled');
+      el.removeAttribute('aria-disabled');
+    } else {
+      el.setAttribute('href', '#');
+      el.classList.add('is-disabled');
+      el.setAttribute('aria-disabled', 'true');
+      el.removeAttribute('target');
+    }
+  });
+}
+
+function setContactFormEnabled(enabled) {
+  contactEnabled = enabled;
+  const form = document.querySelector('.contact-form');
+  if (!form) return;
+  const controls = form.querySelectorAll('input, textarea, button');
+  controls.forEach((control) => {
+    control.disabled = !enabled;
+  });
+  form.classList.toggle('is-disabled', !enabled);
+}
 
 // ════ SESSION PERSISTENCE ════
 function loadStoredSession() {
@@ -915,11 +960,39 @@ function showToast(msg) {
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
-function submitContact(e) {
+async function submitContact(e) {
   e.preventDefault();
+  if (!contactEnabled) {
+    showToast('Formulario temporalmente deshabilitado');
+    return;
+  }
   const btn = e.target.querySelector('.btn-submit');
-  btn.textContent = '✦ ENVIADO ✦';
-  setTimeout(() => { btn.textContent = 'ENVIAR MENSAJE'; e.target.reset(); }, 3000);
+  const firstName = document.getElementById('contactFirstName').value.trim();
+  const lastName = document.getElementById('contactLastName').value.trim();
+  const email = document.getElementById('contactEmail').value.trim();
+  const message = document.getElementById('contactMessage').value.trim();
+
+  if (!firstName || !email || !message) {
+    showToast('Completá nombre, email y mensaje');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '✦ ENVIANDO... ✦';
+
+  try {
+    await api('POST', '/contact', { firstName, lastName, email, message });
+    btn.textContent = '✦ ENVIADO ✦';
+    showToast('Consulta enviada ✦');
+    e.target.reset();
+  } catch (err) {
+    showToast(err.message || 'No se pudo enviar la consulta');
+  } finally {
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'ENVIAR MENSAJE';
+    }, 1500);
+  }
 }
 function observeFadeIns() {
   document.querySelectorAll('.fade-in').forEach(el => {

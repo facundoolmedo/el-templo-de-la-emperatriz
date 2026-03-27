@@ -7,6 +7,8 @@ const cors    = require('cors');
 
 const authRoutes  = require('./routes/auth');
 const postRoutes  = require('./routes/posts');
+const publicRoutes = require('./routes/public');
+const contactRoutes = require('./routes/contact');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +28,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ─── RUTAS API ───────────────────────────────────────────────────────
 app.use('/api/auth',  authRoutes);
 app.use('/api/posts', postRoutes);
+app.use('/api/public', publicRoutes);
+app.use('/api/contact', contactRoutes);
 
 // ─── HEALTH CHECK ────────────────────────────────────────────────────
 app.get('/api/health', (req, res) => {
