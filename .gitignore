@@ -7,3 +7,4 @@ public/uploads/*.jpeg
 public/uploads/*.png
 public/uploads/*.mp4
 public/uploads/*.mov
+*.zip
