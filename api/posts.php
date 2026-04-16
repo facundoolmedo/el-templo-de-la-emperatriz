@@ -208,7 +208,12 @@ function handlePostsRequest($method, $path, $body) {
             $cover_image = optimizeImage($_FILES['cover']['tmp_name'], $_FILES['cover']['name']);
         }
 
-        $finalVideoUrl = $video_url ?: $existing['video_url'];
+        if (isset($_POST['delete_video']) && $_POST['delete_video'] === '1') {
+            $finalVideoUrl = null;
+        } else {
+            $finalVideoUrl = $video_url ?: $existing['video_url'];
+        }
+        
         if (isset($_FILES['video']) && $_FILES['video']['error'] === UPLOAD_ERR_OK) {
             $finalVideoUrl = handleVideoUpload($_FILES['video']['tmp_name'], $_FILES['video']['name']);
         }
@@ -227,7 +232,11 @@ function handlePostsRequest($method, $path, $body) {
             'author_id' => $user['id']
         ]);
 
-        if (isset($_FILES['images']) && count($_FILES['images']['name']) > 0 && $_FILES['images']['name'][0] != '') {
+        if (isset($_POST['delete_images']) && $_POST['delete_images'] === '1') {
+            Queries::deletePostImages($postId);
+        }
+
+        if (isset($_FILES['images']) && is_array($_FILES['images']['name']) && count($_FILES['images']['name']) > 0 && $_FILES['images']['name'][0] != '') {
             Queries::deletePostImages($postId);
             $total = is_array($_FILES['images']['name']) ? count($_FILES['images']['name']) : 0;
             for ($i = 0; $i < $total; $i++) {

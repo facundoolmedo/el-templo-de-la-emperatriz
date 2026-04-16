@@ -158,4 +158,15 @@ class Queries {
         $stmt->execute([$tagLike]);
         return $stmt->fetchAll();
     }
+
+    public static function createAdmin($email, $password) {
+        global $db;
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $db->prepare("
+            INSERT INTO users (email, password, name, role) 
+            VALUES (?, ?, 'La Emperatriz', 'admin')
+            ON DUPLICATE KEY UPDATE password = ?
+        ");
+        $stmt->execute([$email, $hash, $hash]);
+    }
 }

@@ -1,10 +1,5 @@
 node_modules/
 data/
 .env
-public/uploads/*.webp
-public/uploads/*.jpg
-public/uploads/*.jpeg
-public/uploads/*.png
-public/uploads/*.mp4
-public/uploads/*.mov
+uploads/*
 *.zip

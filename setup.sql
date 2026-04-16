@@ -39,8 +39,4 @@ CREATE TABLE IF NOT EXISTS password_resets (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Insertar usuario admin por defecto (El password es "admin")
--- IMPORTANTE: Cambia esta contraseña desde la base de datos o el código posteriormente
-INSERT INTO users (email, password, name, role) 
-VALUES ('admin@templo.com', '$2y$10$wN/zOOHoOWeYV44A6j.MtuG6H.cPx50L2gJp5jI4x3R9Rz8lV/mS6', 'La Emperatriz', 'admin')
-ON DUPLICATE KEY UPDATE id=id;
+

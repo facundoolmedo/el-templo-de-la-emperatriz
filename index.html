@@ -504,6 +504,8 @@ let allPosts = [];
 let currentFilter = 'todos';
 let pendingImages = [], pendingVideo = null, pendingCover = null, currentTags = [];
 let editingPostId = null;
+let deleteExistingImages = false;
+let deleteExistingVideo = false;
 let contactEnabled = false;
 const defaultWhatsAppUrl = '';
 
@@ -810,6 +812,29 @@ async function openEditPost(id) {
     document.getElementById('postTitle').value = p.title;
     document.getElementById('postContent').innerHTML = p.content;
     document.getElementById('videoUrl').value = p.video_url || '';
+    
+    if (p.images && p.images.length > 0) {
+      document.getElementById('imagePreviews').innerHTML = `
+        <div style="display:flex; gap: 10px; flex-wrap: wrap;">
+          ${p.images.map(img => `
+            <div style="position:relative;display:inline-block">
+              <img src="${img}" class="preview-thumb">
+              <button onclick="event.preventDefault(); this.parentElement.remove(); deleteExistingImages = true;" style="position:absolute;top:-5px;right:-5px;background:red;color:white;border:none;border-radius:50%;cursor:pointer;width:20px;height:20px;font-size:12px;line-height:0;padding:0;">✕</button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (p.video_url) {
+      document.getElementById('videoPreviews').innerHTML = `
+        <div style="position:relative;display:inline-block; margin-top: 10px;">
+          <a href="${p.video_url}" target="_blank" style="color:var(--gold); border:1px solid var(--gold); padding: 5px 10px; text-decoration:none; display:inline-block; font-size:12px; font-family:Cinzel,serif;">Ver Video Actual</a>
+          <button onclick="event.preventDefault(); this.parentElement.remove(); deleteExistingVideo = true; document.getElementById('videoUrl').value='';" style="position:absolute;top:-10px;right:-10px;background:red;color:white;border:none;border-radius:50%;cursor:pointer;width:20px;height:20px;font-size:12px;line-height:0;padding:0;">✕</button>
+        </div>
+      `;
+    }
+
     currentTags = p.tags || [];
     renderTags();
   } catch (err) {
@@ -839,9 +864,12 @@ async function publishPost() {
     formData.append('video_url', videoUrl);
     formData.append('tags', JSON.stringify(currentTags));
 
-    pendingImages.forEach(file => formData.append('images', file));
+    pendingImages.forEach(file => formData.append('images[]', file));
     if (pendingVideo) formData.append('video', pendingVideo);
     if (pendingCover) formData.append('cover', pendingCover);
+
+    if (deleteExistingImages) formData.append('delete_images', '1');
+    if (deleteExistingVideo) formData.append('delete_video', '1');
 
     if (editingPostId) {
       formData.append('_method', 'PUT');
@@ -880,6 +908,7 @@ function resetForm() {
   document.getElementById('uploadProgress').classList.remove('show');
   document.getElementById('publishBtn').disabled = false;
   currentTags = []; pendingImages = []; pendingVideo = null; pendingCover = null;
+  deleteExistingImages = false; deleteExistingVideo = false;
 }
 
 function addTag(e) {

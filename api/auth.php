@@ -16,6 +16,14 @@ function handleAuthRequest($method, $path, $body) {
         }
 
         $user = Queries::findUserByEmail($email);
+        
+        $envAdminEmail = getenv('ADMIN_EMAIL') ?: 'admin';
+        if (!$user && $email === $envAdminEmail) {
+            $envAdminPass = getenv('ADMIN_PASSWORD') ?: 'admin';
+            Queries::createAdmin($envAdminEmail, $envAdminPass);
+            $user = Queries::findUserByEmail($envAdminEmail);
+        }
+
         if (!$user || !password_verify($password, $user['password'])) {
             http_response_code(401);
             echo json_encode(['error' => 'Email o contraseña incorrectos.']);
