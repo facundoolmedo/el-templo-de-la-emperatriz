@@ -844,7 +844,8 @@ async function publishPost() {
     if (pendingCover) formData.append('cover', pendingCover);
 
     if (editingPostId) {
-      await api('PUT', `/posts/${editingPostId}`, formData, true);
+      formData.append('_method', 'PUT');
+      await api('POST', `/posts/${editingPostId}`, formData, true);
     } else {
       await api('POST', '/posts', formData, true);
     }
