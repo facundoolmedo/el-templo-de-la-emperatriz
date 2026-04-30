@@ -1550,12 +1550,15 @@
       }
 
       .nav-logo {
-        font-size: .85rem;
-        letter-spacing: .14em;
-        max-width: 75vw;
+        font-size: .75rem;
+        letter-spacing: .1em;
+        max-width: 85vw;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis
+      }
+      .nav-logo img {
+        height: 38px !important;
       }
 
       .nav-links {
@@ -1638,8 +1641,8 @@
 
   <!-- ════ NAV ════ -->
   <nav id="nav">
-    <span class="nav-logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 1rem; margin-left: -1.5rem;">
-      <img src="static/logo_sin_texto_sin_fondo.png" alt="Logo" style="height: 55px; width: auto; margin-top: -6px;">
+    <span class="nav-logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 1rem;">
+      <img src="static/logo_sin_texto_sin_fondo.png" alt="Logo" style="height: 55px; width: auto;">
       EL TEMPLO DE LA EMPERATRIZ
     </span>
     <ul class="nav-links" id="navLinks">
@@ -1715,7 +1718,9 @@
         </div>
       </div>
       <div class="about-visual">
-        <div class="moon-art">🗝️</div>
+        <div class="moon-art">
+          <img src="static/key.png" alt="Llave del Templo" style="width: 65px; height: auto; object-fit: contain;">
+        </div>
       </div>
     </div>
     <div class="divider"></div>
