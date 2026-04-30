@@ -126,7 +126,7 @@
 
     .nav-links a {
       font-family: 'Cinzel', serif;
-      font-size: .7rem;
+      font-size: .75rem;
       color: var(--muted);
       text-decoration: none;
       letter-spacing: .18em;
@@ -1624,6 +1624,11 @@
       }
     }
   </style>
+  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
 </head>
 
 <body>
@@ -1633,7 +1638,10 @@
 
   <!-- ════ NAV ════ -->
   <nav id="nav">
-    <span class="nav-logo" onclick="showPage('home')">✦ EL TEMPLO DE LA EMPERATRIZ</span>
+    <span class="nav-logo" onclick="showPage('home')" style="display: flex; align-items: center; gap: 1rem; margin-left: -1.5rem;">
+      <img src="static/logo_sin_texto_sin_fondo.png" alt="Logo" style="height: 55px; width: auto; margin-top: -6px;">
+      EL TEMPLO DE LA EMPERATRIZ
+    </span>
     <ul class="nav-links" id="navLinks">
       <li><a onclick="showPage('home');closeMenu()">INICIO</a></li>
       <li><a onclick="showPage('about');closeMenu()">SOBRE MÍ</a></li>
@@ -1699,14 +1707,15 @@
         <p>No improviso. Analizo. Intervengo. Guío.</p>
         <p>Miles consultan buscando respuestas. Muchos llegan confundidos, agotados o estancados. Y se van con dirección
           y resultados.</p>
-        <a class="hero-cta" href="https://www.instagram.com/eltemplodelaemperatriz" target="_blank"
-          rel="noopener noreferrer" style="font-size:.65rem;margin-top:1rem;display:inline-block">HABLAR POR
-          INSTAGRAM</a>
-        <span class="hero-cta" onclick="showPage('about')"
-          style="font-size:.65rem;margin-top:1rem;display:inline-block;margin-left:1rem">LEER MÁS</span>
+        <div style="display: flex; flex-direction: column; gap: 1rem; align-items: flex-start; margin-top: 1rem;">
+          <a class="hero-cta" href="https://www.instagram.com/eltemplodelaemperatriz" target="_blank"
+            rel="noopener noreferrer" style="font-size:.65rem;">HABLAR POR INSTAGRAM</a>
+          <span class="hero-cta" onclick="showPage('about')"
+            style="font-size:.65rem;">LEER MÁS</span>
+        </div>
       </div>
       <div class="about-visual">
-        <div class="moon-art">🌙</div>
+        <div class="moon-art">🗝️</div>
       </div>
     </div>
     <div class="divider"></div>
@@ -1770,7 +1779,7 @@
       <div style="text-align:center;margin-top:2rem">
         <a class="hero-cta" href="https://www.instagram.com/eltemplodelaemperatriz" target="_blank"
           rel="noopener noreferrer"
-          style="padding:1.5rem 4rem;font-size:1rem;background:var(--gold);color:var(--deep)">RESERVAR AHORA</a>
+          style="padding:1rem 3rem;font-size:.8rem;background:var(--gold);color:var(--deep)">RESERVAR AHORA</a>
       </div>
     </section>
   </div>
@@ -1894,7 +1903,8 @@
               class="form-input" id="postTitle" type="text" placeholder="Escribe el título aquí..."></div>
           <div class="form-group" style="margin-bottom:1rem">
             <label class="form-label">ETIQUETAS (Enter para agregar)</label>
-            <input class="tag-input" id="tagInput" placeholder="ritual, tarot, luna, altares..." onkeydown="addTag(event)">
+            <input class="tag-input" id="tagInput" placeholder="ritual, tarot, luna, altares..."
+              onkeydown="addTag(event)">
             <div class="tags-display" id="tagsDisplay"></div>
           </div>
           <div class="form-group" style="margin-bottom:1rem">
